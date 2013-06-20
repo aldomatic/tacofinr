@@ -1,60 +1,42 @@
 //Application Window Component Constructor
+
+// Test URL: http://api.yelp.com/business_review_search?term=taco&lat=32.8790283203125&long=-96.77059173583984&radius=3&limit=3&ywsid=-sS9ARVeXV9ziC576Zkrtw&category=mexican
+var radius = 1; // Set default search radius to 1 mile
+
 function ApplicationWindow() {
 	
+
+	var serarchRadiusBtn = Titanium.UI.createButton({
+		title:"1 Miles",
+		backgroundColor:"#000"
+	});
+	
+
 	//Here's the first window...
 	var first = Ti.UI.createWindow({
 	  backgroundColor:"#333",
-	  fullscreen:false,
-	  barColor: "#000",
+	  fullscreen:true,
+	  barColor: "#000",	  
 	  barImage: "images/toolbarBg.png",
-	  backgroundImage:"images/appBg.png"
+	  backgroundImage:"images/appBg.png",
+	  tabBarHidden: true,
+	  rightNavButton: serarchRadiusBtn
 	});
 	
 	// Search Button
 	var searchBtn = Ti.UI.createButton({
-		top: 340,
-		width: 274,
-	    height: 60,
+		top: 240,
+		width: 258,
+	    height: 102,
 	    backgroundImage: "images/findBtn.png"
-	    //backgroundSelectedImage: "images/find-tacos-overBtn.png",
 	});
-
-	var radiusBtn = Ti.UI.createButton({
-		top: 285,
-		width:274,
-		height: 38,
-		backgroundImage:"images/searchRadiusBtn.png"
-	});
-	first.add(radiusBtn);
 
 	
-	/* 
-		Radius Picker 
-	*/
-
-
+/* 
+	Radius Picker 
+*/
 var tr = Titanium.UI.create2DMatrix();
-tr = tr.rotate(90);
-
-var drop_button =  Titanium.UI.createButton({
-		style:Titanium.UI.iPhone.SystemButton.DISCLOSURE,
-		transform:tr
-});
-var my_combo = Titanium.UI.createTextField({
-	hintText:"Search radius...",
-	height:40,
-	width:300,
-	top:20,
-	borderStyle:Titanium.UI.INPUT_BORDERSTYLE_ROUNDED,
-	rightButton:drop_button,
-	rightButtonMode:Titanium.UI.INPUT_BUTTONMODE_ALWAYS
-});
-
-
-
-
-
-
+	tr = tr.rotate(90);
 
 var picker_view = Titanium.UI.createView({
 	height:251,
@@ -90,13 +72,17 @@ var picker = Titanium.UI.createPicker({
 picker.selectionIndicator=true;
 
 var picker_data = [
-	Titanium.UI.createPickerRow({title:'1 Mile'}),
-	Titanium.UI.createPickerRow({title:'2 Miles'}),
-	Titanium.UI.createPickerRow({title:'3 Miles'}),
-	Titanium.UI.createPickerRow({title:'4 Miles'}),
-	Titanium.UI.createPickerRow({title:'5 Miles'})
+	Titanium.UI.createPickerRow({title:'1'}),
+	Titanium.UI.createPickerRow({title:'2'}),
+	Titanium.UI.createPickerRow({title:'3'}),
+	Titanium.UI.createPickerRow({title:'4'}),
+	Titanium.UI.createPickerRow({title:'5'}),
+	Titanium.UI.createPickerRow({title:'6'}),
+	Titanium.UI.createPickerRow({title:'7'}),
+	Titanium.UI.createPickerRow({title:'8'}),
+	Titanium.UI.createPickerRow({title:'9'}),
+	Titanium.UI.createPickerRow({title:'10'})
 ];
-
 
 picker.add(picker_data);
 
@@ -110,9 +96,8 @@ var slide_out =  Titanium.UI.createAnimation({bottom:-251});
 
 
 
-radiusBtn.addEventListener('click',function() {
+serarchRadiusBtn.addEventListener('click',function() {
 	picker_view.animate(slide_in);
-	my_combo.blur();
 });
 
 cancel.addEventListener('click',function() {
@@ -121,15 +106,13 @@ cancel.addEventListener('click',function() {
 
 
 done.addEventListener('click',function() {
-	var r = picker.getSelectedRow(0).title;
-	console.log(r);
+	radius = picker.getSelectedRow(0).title;
+	serarchRadiusBtn.title = radius + " Miles";
+	//alert(radius);
 	picker_view.animate(slide_out);
 });
 
-
-
 first.add(picker_view);
-//first.add(my_combo);
 
 //win1.open();
 
@@ -157,10 +140,13 @@ first.add(picker_view);
 	});
 	//second.add(Ti.UI.createLabel({text:"Here's the child"}));
 	 
+	
+
+
+
+
 	//When the label on the first window receives a touch, open the second
 	searchBtn.addEventListener("click", function(e) {
-	  
-
 		if (Ti.Geolocation.locationServicesEnabled) {
 		    Titanium.Geolocation.purpose = 'Get Current Location';
     		Titanium.Geolocation.getCurrentPosition(function(e) {
@@ -168,15 +154,16 @@ first.add(picker_view);
 		            Ti.API.error('Error: ' + e.error);
 		        } else {
 		            //Ti.API.info(e.coords);
-		            pingYelp(e.coords.latitude, e.coords.longitude);
+		            pingYelp(e.coords.latitude, e.coords.longitude, radius);
 		        }
 		    });
 		} else {
 		    alert('Please enable location services');
 		}
-
-	  
 	});
+
+
+
 	 
 	//This is the main window of the application
 	var main = Ti.UI.createWindow();
@@ -187,13 +174,14 @@ first.add(picker_view);
 		rowData = []; 
 		
 	//Yelp call
-	function pingYelp(lat, lng){ 
+	function pingYelp(lat, lng, radius){
+
+
 		
 	    var xhr = Ti.Network.createHTTPClient({
 	    	onload: function(){
 	    	
 	    	json = JSON.parse(this.responseText);
-	    	//console.log(json);
 	    	
 	    	for(var i = 0; i < json.businesses.length; i++)
 	    	{
@@ -284,7 +272,7 @@ first.add(picker_view);
 	    	// Create the table view and set its data source to "rowData" array
 			var tableView = Titanium.UI.createTableView({
 					data:rowData,
-					backgroundColor:"#333",
+					backgroundColor:"#000w",
 					separatorStyle: Titanium.UI.iPhone.TableViewSeparatorStyle.SINGLE_LINE,
 					sepertorColor:"#000"				
 				});
@@ -324,7 +312,9 @@ first.add(picker_view);
 		    timeout:5000
 	    });
 	    
-	    xhr.open("GET", 'http://api.yelp.com/business_review_search?term=taco&lat='+lat+'&long='+lng+'&radius=3&limit=35&ywsid=-sS9ARVeXV9ziC576Zkrtw&category=mexican');
+	    xhr.open("GET", 'http://api.yelp.com/business_review_search?term=taco&lat='+lat+'&long='+lng+'&radius='+radius+'&limit=35&ywsid=-sS9ARVeXV9ziC576Zkrtw&category=mexican');
+
+
 		xhr.send();
 	    
 		}
