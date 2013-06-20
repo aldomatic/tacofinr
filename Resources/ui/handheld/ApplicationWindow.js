@@ -1,10 +1,19 @@
 //Application Window Component Constructor
 
 // Test URL: http://api.yelp.com/business_review_search?term=taco&lat=32.8790283203125&long=-96.77059173583984&radius=3&limit=3&ywsid=-sS9ARVeXV9ziC576Zkrtw&category=mexican
+
 var radius = 1; // Set default search radius to 1 mile
 
 function ApplicationWindow() {
 	
+	var logo = Titanium.UI.createImageView({
+		width: 250,
+		height: 197,
+		image: "images/tf-logo.png",
+		top:15
+	});
+
+
 
 	var serarchRadiusBtn = Titanium.UI.createButton({
 		title:"1 Miles",
@@ -14,12 +23,12 @@ function ApplicationWindow() {
 
 	//Here's the first window...
 	var first = Ti.UI.createWindow({
-	  backgroundColor:"#333",
+	  backgroundColor:"#ff5409",
 	  fullscreen:true,
 	  barColor: "#000",	  
-	  barImage: "images/toolbarBg.png",
-	  backgroundImage:"images/appBg.png",
+	  barImage: "images/tf-toolbar-bg.png",
 	  tabBarHidden: true,
+	  backgroundImage: "images/tf-bg.png",
 	  rightNavButton: serarchRadiusBtn
 	});
 	
@@ -31,7 +40,7 @@ function ApplicationWindow() {
 	    backgroundImage: "images/findBtn.png"
 	});
 
-	
+	first.add(logo);
 /* 
 	Radius Picker 
 */
@@ -63,7 +72,7 @@ var toolbar =  Titanium.UI.iOS.createToolbar({
 	top:0,
 	items:[cancel,spacer,done],
 	barColor: "#000",
-	backgroundImage:'images/toolbarBg.png'
+	backgroundImage: "images/tf-toolbar-bg.png"
 });
 
 var picker = Titanium.UI.createPicker({
@@ -136,7 +145,7 @@ first.add(picker_view);
 	var second = Ti.UI.createWindow({
 	  title:"Results",
 	  barColor: "#000",
-	  barImage: "images/toolbarBg.png"
+	  barImage: "images/tf-toolbar-bg.png"
 	});
 	//second.add(Ti.UI.createLabel({text:"Here's the child"}));
 	 
